@@ -124,10 +124,10 @@ class HotkeyRecorder:
         WM_SYSKEYUP = 0x0105
 
         HOOKPROC = ctypes.WINFUNCTYPE(
-            ctypes.c_long,          # LRESULT
+            wt.LPARAM,              # LRESULT (pointer-sized)
             ctypes.c_int,           # nCode
-            ctypes.wintypes.WPARAM, # wParam
-            ctypes.wintypes.LPARAM, # lParam
+            wt.WPARAM,              # wParam
+            wt.LPARAM,              # lParam
         )
 
         class KBDLLHOOKSTRUCT(ctypes.Structure):
@@ -136,10 +136,14 @@ class HotkeyRecorder:
                 ("scanCode", wt.DWORD),
                 ("flags", wt.DWORD),
                 ("time", wt.DWORD),
-                ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong)),
+                ("dwExtraInfo", ctypes.POINTER(ctypes.c_size_t)),
             ]
 
         user32 = ctypes.windll.user32
+
+        # Explicit argtypes for 64-bit safety
+        user32.CallNextHookEx.argtypes = [wt.HHOOK, ctypes.c_int, wt.WPARAM, wt.LPARAM]
+        user32.CallNextHookEx.restype = wt.LPARAM
 
         def _hook_proc(nCode, wParam, lParam):
             if nCode >= 0 and self.recording:
