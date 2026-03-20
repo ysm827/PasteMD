@@ -466,5 +466,5 @@ If this tool helps you, you can buy the author a coffee ☕. Your support motiva
 
 ## License
 
-This project is released under the [MIT License](../../LICENSE).
+This project is released under the [GNU Affero General Public License v3.0](../../LICENSE).
 Third-party licenses are listed in [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md).
