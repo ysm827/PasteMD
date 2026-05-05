@@ -14,6 +14,7 @@ from ..utils.logging import log
 
 LUA_KEEP_ORIGINAL_FORMULA = resource_path("lua/keep-latex-math.lua")
 LUA_LATEX_REPLACEMENTS = resource_path("lua/latex-replacements.lua")
+LUA_NORMALIZE_MARKDOWN_BREAKS = resource_path("lua/normalize-markdown-breaks.lua")
 
 
 def _log_pandoc_stderr_as_warning(stderr: Optional[bytes], *, context: str) -> None:
@@ -201,6 +202,7 @@ class PandocIntegration:
         ]
         if enable_latex_replacements:
             cmd += ["--lua-filter", LUA_LATEX_REPLACEMENTS]
+        cmd += ["--lua-filter", LUA_NORMALIZE_MARKDOWN_BREAKS]
         if Keep_original_formula:
             cmd += ["--lua-filter", LUA_KEEP_ORIGINAL_FORMULA]
         cmd += self._build_filter_args(custom_filters)
@@ -256,6 +258,7 @@ class PandocIntegration:
         ]
         if enable_latex_replacements:
             cmd += ["--lua-filter", LUA_LATEX_REPLACEMENTS]
+        cmd += ["--lua-filter", LUA_NORMALIZE_MARKDOWN_BREAKS]
         if Keep_original_formula:
             cmd += ["--lua-filter", LUA_KEEP_ORIGINAL_FORMULA]
         cmd += self._build_filter_args(custom_filters)
@@ -314,6 +317,7 @@ class PandocIntegration:
         ]
         if enable_latex_replacements:
             cmd += ["--lua-filter", LUA_LATEX_REPLACEMENTS]
+        cmd += ["--lua-filter", LUA_NORMALIZE_MARKDOWN_BREAKS]
         if Keep_original_formula:
             cmd += ["--lua-filter", LUA_KEEP_ORIGINAL_FORMULA]
         # 添加自定义 Filter
@@ -548,6 +552,7 @@ class PandocIntegration:
         ]
         if enable_latex_replacements:
             cmd += ["--lua-filter", LUA_LATEX_REPLACEMENTS]
+        cmd += ["--lua-filter", LUA_NORMALIZE_MARKDOWN_BREAKS]
         cmd += self._build_filter_args(custom_filters)
 
         startupinfo = None
