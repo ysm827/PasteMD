@@ -1,6 +1,6 @@
 #define MyAppName "PasteMD"
 #ifndef MyAppVersion
-#define MyAppVersion "0.1.7.0"
+#define MyAppVersion ExecAndGetFirstLine("python", "-c ""from pastemd import __version__; print(__version__)""", SourcePath)
 #endif
 #define MyAppPublisher "RichQAQ"
 #define MyAppExeName "PasteMD.exe"

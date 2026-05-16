@@ -197,7 +197,18 @@ jobs:
 
       - name: Install Inno Setup
         shell: pwsh
-        run: choco install innosetup --no-progress -y
+        run: |
+          $ErrorActionPreference = "Stop"
+          choco install innosetup --no-progress -y
+
+          $languageDir = "${env:ProgramFiles(x86)}\Inno Setup 6\Languages"
+          New-Item -ItemType Directory -Force $languageDir | Out-Null
+          $languageFile = Join-Path $languageDir "ChineseSimplified.isl"
+          if (-not (Test-Path $languageFile)) {
+            Invoke-WebRequest `
+              -Uri "https://raw.githubusercontent.com/jrsoftware/issrc/main/Files/Languages/Unofficial/ChineseSimplified.isl" `
+              -OutFile $languageFile
+          }
 
       - name: Resolve Pandoc version
         id: resolve-pandoc-windows
@@ -304,12 +315,11 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $version = python -c "from pastemd import __version__; print(__version__)"
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
           if (-not (Test-Path $iscc)) {
             throw "ISCC.exe not found: $iscc"
           }
-          & $iscc "/DMyAppVersion=$version" "installer.iss"
+          & $iscc "installer.iss"
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
