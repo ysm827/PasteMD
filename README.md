@@ -29,6 +29,18 @@
 <a href="https://hellogithub.com/repository/RICHQAQ/PasteMD" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=7dfb1883330d441f9264d8e8945c75e2&claim_uid=RvDOqI1Satiwzh4&theme=neutral" alt="Featured｜HelloGitHub" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
+
+<!-- sponsor-ad:start -->
+## ❤️ 赞助商
+<table>
+<tr>
+<td width="200" align="center" valign="middle"><img src="docs/img/Doloffer_logo.png" alt="pincc" width="180"></a></td>
+<td valign="middle"> 
+  <a href="https://doloffer.com/friend/PduWP9xx">感谢 DolOffer 对本项目的支持！DolOffer 提供 ChatGPT Plus、Claude、YouTube Premium、Spotify、Apple Music 等热门数字订阅优惠，正版稳定，售后无忧。通过专属链接注册并使用优惠码 `AI8888`，可额外享受 9 折优惠。部分产品目前需在香港或韩国 IP 下查看和购买。</a></td>
+</tr>
+</table>
+<!-- sponsor-ad:end -->
+
 > 在写论文或报告时，从 ChatGPT / DeepSeek 等 AI 网站中复制出来的公式在 Word 里总是乱码？Markdown 表格复制到 Excel 总是不行？**PasteMD 就是为了解决这个问题而生的，嘿嘿**
 > 
 > <img src="docs/gif/atri/igood.gif"
