@@ -614,6 +614,19 @@ class SettingsDialog:
         self.html_indent_var = tk.BooleanVar(value=self.current_config.get("html_disable_first_para_indent", True))
         ttk.Checkbutton(content, text=t("settings.conversion.html_indent"), variable=self.html_indent_var).grid(row=current_row+5, column=0, columnspan=3, sticky=tk.W, pady=2)
 
+        self.markdown_hard_line_breaks_var = tk.BooleanVar(value=self.current_config.get("markdown_hard_line_breaks", False))
+        ttk.Checkbutton(
+            content,
+            text=t("settings.conversion.markdown_hard_line_breaks"),
+            variable=self.markdown_hard_line_breaks_var,
+        ).grid(row=current_row+6, column=0, columnspan=3, sticky=tk.W, pady=(8, 2))
+        ttk.Label(
+            content,
+            text=t("settings.conversion.markdown_hard_line_breaks_note"),
+            foreground="gray",
+            font=("", 8),
+        ).grid(row=current_row+7, column=0, columnspan=3, sticky=tk.W, padx=(20, 0), pady=(0, 5))
+
     def _create_advanced_tab(self):
         """创建高级设置选项卡"""
         frame = ttk.Frame(self.notebook, padding=10)
@@ -928,6 +941,10 @@ class SettingsDialog:
             new_config["html_disable_first_para_indent"] = self._get_var_value(
                 "html_indent_var",
                 self.current_config.get("html_disable_first_para_indent", True),
+            )
+            new_config["markdown_hard_line_breaks"] = self._get_var_value(
+                "markdown_hard_line_breaks_var",
+                self.current_config.get("markdown_hard_line_breaks", False),
             )
             new_config["Keep_original_formula"] = self._get_var_value(
                 "keep_formula_var",

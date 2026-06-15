@@ -191,6 +191,7 @@ class DocumentGenerator:
             reference_docx=config.get("reference_docx"),
             Keep_original_formula=config.get("Keep_original_formula", False),
             enable_latex_replacements=config.get("enable_latex_replacements", True),
+            markdown_hard_line_breaks=config.get("markdown_hard_line_breaks", False),
             custom_filters=_get_pandoc_filters(config, "md_to_docx"),
             request_headers=request_headers,
             cwd=config.get("save_dir"),
@@ -286,6 +287,7 @@ class DocumentGenerator:
             md_text,
             Keep_original_formula=config.get("Keep_original_formula", True),
             enable_latex_replacements=config.get("enable_latex_replacements", True),
+            markdown_hard_line_breaks=config.get("markdown_hard_line_breaks", False),
             custom_filters=_get_pandoc_filters(config, "md_to_html"),
             cwd=config.get("save_dir"),
         )
@@ -304,6 +306,7 @@ class DocumentGenerator:
             md_text,
             Keep_original_formula=config.get("Keep_original_formula", True),
             enable_latex_replacements=config.get("enable_latex_replacements", True),
+            markdown_hard_line_breaks=config.get("markdown_hard_line_breaks", False),
             custom_filters=_get_pandoc_filters(config, "md_to_rtf"),
             request_headers=request_headers,
             cwd=config.get("save_dir"),
@@ -336,5 +339,6 @@ class DocumentGenerator:
             md_text,
             strip_preamble=True,
             enable_latex_replacements=config.get("enable_latex_replacements", True),
+            markdown_hard_line_breaks=config.get("markdown_hard_line_breaks", False),
             custom_filters=_get_pandoc_filters(config, "md_to_latex"),
         )

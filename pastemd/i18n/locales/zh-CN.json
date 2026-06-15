@@ -146,6 +146,8 @@
     "settings.conversion.first_paragraph_heading": "是否禁用首段格式",
     "settings.conversion.md_indent": "Markdown：禁用标题后首段特殊格式",
     "settings.conversion.html_indent": "HTML：禁用标题后首段特殊格式",
+    "settings.conversion.markdown_hard_line_breaks": "Markdown：保留段落内单换行",
+    "settings.conversion.markdown_hard_line_breaks_note": "用于选择题等需要逐行保留的内容。开启后，段落内每个单换行都会在 Word 中保留为换行。",
     "settings.conversion.pandoc_filters": "Pandoc Filters（按转换类型）",
     "settings.conversion.pandoc_filters_note": "（该转换执行顺序从上到下）",
     "settings.conversion.filter_conversion_label": "转换类型",

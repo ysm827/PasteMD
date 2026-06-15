@@ -146,6 +146,8 @@
     "settings.conversion.first_paragraph_heading": "Disable first-paragraph formatting",
     "settings.conversion.md_indent": "Markdown: disable special first-paragraph style after headings",
     "settings.conversion.html_indent": "HTML: disable special first-paragraph style after headings",
+    "settings.conversion.markdown_hard_line_breaks": "Markdown: preserve line breaks inside paragraphs",
+    "settings.conversion.markdown_hard_line_breaks_note": "Useful for quiz/options text that must stay line-by-line. When enabled, each single line break inside a paragraph is kept as a Word line break.",
     "settings.conversion.pandoc_filters": "Pandoc filters (per conversion)",
     "settings.conversion.pandoc_filters_note": "(applied top to bottom)",
     "settings.conversion.filter_conversion_label": "Conversion",

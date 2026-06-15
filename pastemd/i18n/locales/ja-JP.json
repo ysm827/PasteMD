@@ -146,6 +146,8 @@
     "settings.conversion.first_paragraph_heading": "先頭段落の書式を無効化する",
     "settings.conversion.md_indent": "Markdown：見出し後の先頭段落の特殊書式を無効化",
     "settings.conversion.html_indent": "HTML：見出し後の先頭段落の特殊書式を無効化",
+    "settings.conversion.markdown_hard_line_breaks": "Markdown：段落内の単独改行を保持",
+    "settings.conversion.markdown_hard_line_breaks_note": "選択肢など行ごとに保持したい内容向けです。有効にすると、段落内の単独改行を Word の改行として保持します。",
     "settings.conversion.pandoc_filters": "Pandoc Filters（変換ごと）",
     "settings.conversion.pandoc_filters_note": "（該当の変換で上から順に適用）",
     "settings.conversion.filter_conversion_label": "変換タイプ",
