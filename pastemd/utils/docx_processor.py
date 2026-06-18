@@ -294,10 +294,15 @@ class DocxProcessor:
         available_width: int,
     ) -> int:
         modified_count = 0
-        widths = DocxProcessor._suggest_table_column_widths(
+        table_width = DocxProcessor._available_table_width(
             table,
             namespaces,
             available_width,
+        )
+        widths = DocxProcessor._suggest_table_column_widths(
+            table,
+            namespaces,
+            table_width,
         )
 
         if widths:
@@ -313,7 +318,7 @@ class DocxProcessor:
                 if cell_width is None and index < len(widths):
                     cell_width = widths[index]
                 if cell_width is None:
-                    cell_width = available_width
+                    cell_width = table_width
                 modified_count += DocxProcessor._auto_layout_tables_in_element(
                     cell,
                     namespaces,
@@ -352,6 +357,30 @@ class DocxProcessor:
             return []
 
         return DocxProcessor._column_widths_from_scores(scores, total_width)
+
+    @staticmethod
+    def _available_table_width(
+        table: ET.Element,
+        namespaces: dict,
+        fallback_width: int,
+    ) -> int:
+        tbl_width = table.find("./w:tblPr/w:tblW", namespaces)
+        if tbl_width is not None:
+            parsed_width = DocxProcessor._parse_twips(tbl_width.get(f"{{{_WORD_NS}}}w"))
+            if parsed_width is not None:
+                width_type = tbl_width.get(f"{{{_WORD_NS}}}type")
+                if width_type == "dxa":
+                    return parsed_width
+                if width_type == "pct":
+                    return max(1, int(fallback_width * parsed_width / 5000))
+
+        tbl_layout = table.find("./w:tblPr/w:tblLayout", namespaces)
+        if tbl_layout is not None and tbl_layout.get(f"{{{_WORD_NS}}}type") == "fixed":
+            grid_widths = DocxProcessor._existing_table_column_widths(table, namespaces)
+            if grid_widths:
+                return sum(grid_widths)
+
+        return fallback_width
 
     @staticmethod
     def _existing_table_column_widths(table: ET.Element, namespaces: dict) -> list[int]:
@@ -474,15 +503,12 @@ class DocxProcessor:
             tbl_pr = ET.Element(f"{w}tblPr")
             table.insert(0, tbl_pr)
 
-        tbl_w = tbl_pr.find("./w:tblW", namespaces)
-        if tbl_w is None:
-            tbl_w = ET.SubElement(tbl_pr, f"{w}tblW")
-        tbl_w.set(f"{w}type", "dxa")
-        tbl_w.set(f"{w}w", str(sum(widths)))
+        tbl_w = DocxProcessor._ensure_table_width_element(tbl_pr)
+        if tbl_w.get(f"{w}type") != "pct":
+            tbl_w.set(f"{w}type", "dxa")
+            tbl_w.set(f"{w}w", str(sum(widths)))
 
-        tbl_layout = tbl_pr.find("./w:tblLayout", namespaces)
-        if tbl_layout is None:
-            tbl_layout = ET.SubElement(tbl_pr, f"{w}tblLayout")
+        tbl_layout = DocxProcessor._ensure_table_layout_element(tbl_pr)
         tbl_layout.set(f"{w}type", "fixed")
 
         for child in list(table):
@@ -504,12 +530,96 @@ class DocxProcessor:
                 if tc_pr is None:
                     tc_pr = ET.Element(f"{w}tcPr")
                     cell.insert(0, tc_pr)
-                tc_w = tc_pr.find("./w:tcW", namespaces)
-                if tc_w is None:
-                    tc_w = ET.SubElement(tc_pr, f"{w}tcW")
+                tc_w = DocxProcessor._ensure_cell_width_element(tc_pr)
                 tc_w.set(f"{w}type", "dxa")
                 tc_w.set(f"{w}w", str(widths[index]))
-    
+
+    @staticmethod
+    def _ensure_table_width_element(tbl_pr: ET.Element) -> ET.Element:
+        w = f"{{{_WORD_NS}}}"
+        tbl_w = tbl_pr.find(f"./{w}tblW")
+        if tbl_w is not None:
+            return tbl_w
+
+        tbl_w = ET.Element(f"{w}tblW")
+        following_tags = {
+            f"{w}jc",
+            f"{w}tblCellSpacing",
+            f"{w}tblInd",
+            f"{w}tblBorders",
+            f"{w}shd",
+            f"{w}tblLayout",
+            f"{w}tblCellMar",
+            f"{w}tblLook",
+            f"{w}tblCaption",
+            f"{w}tblDescription",
+            f"{w}tblPrChange",
+        }
+        insert_index = len(tbl_pr)
+        for index, child in enumerate(list(tbl_pr)):
+            if child.tag in following_tags:
+                insert_index = index
+                break
+        tbl_pr.insert(insert_index, tbl_w)
+        return tbl_w
+
+    @staticmethod
+    def _ensure_table_layout_element(tbl_pr: ET.Element) -> ET.Element:
+        w = f"{{{_WORD_NS}}}"
+        tbl_layout = tbl_pr.find(f"./{w}tblLayout")
+        if tbl_layout is not None:
+            tbl_pr.remove(tbl_layout)
+        else:
+            tbl_layout = ET.Element(f"{w}tblLayout")
+
+        following_tags = {
+            f"{w}tblCellMar",
+            f"{w}tblLook",
+            f"{w}tblCaption",
+            f"{w}tblDescription",
+            f"{w}tblPrChange",
+        }
+        insert_index = len(tbl_pr)
+        for index, child in enumerate(list(tbl_pr)):
+            if child.tag in following_tags:
+                insert_index = index
+                break
+        tbl_pr.insert(insert_index, tbl_layout)
+        return tbl_layout
+
+    @staticmethod
+    def _ensure_cell_width_element(tc_pr: ET.Element) -> ET.Element:
+        w = f"{{{_WORD_NS}}}"
+        tc_w = tc_pr.find(f"./{w}tcW")
+        if tc_w is not None:
+            return tc_w
+
+        tc_w = ET.Element(f"{w}tcW")
+        following_tags = {
+            f"{w}gridSpan",
+            f"{w}hMerge",
+            f"{w}vMerge",
+            f"{w}tcBorders",
+            f"{w}shd",
+            f"{w}noWrap",
+            f"{w}tcMar",
+            f"{w}textDirection",
+            f"{w}tcFitText",
+            f"{w}vAlign",
+            f"{w}hideMark",
+            f"{w}cellIns",
+            f"{w}cellDel",
+            f"{w}cellMerge",
+            f"{w}tcPrChange",
+        }
+        insert_index = len(tc_pr)
+        for index, child in enumerate(list(tc_pr)):
+            if child.tag in following_tags:
+                insert_index = index
+                break
+        tc_pr.insert(insert_index, tc_w)
+        return tc_w
+     
     @staticmethod
     def apply_custom_processing(
         docx_bytes: bytes,
