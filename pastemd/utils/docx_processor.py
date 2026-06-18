@@ -427,7 +427,17 @@ class DocxProcessor:
         if len(weights) == 2 and weights[0] * 1.5 < weights[1]:
             first_share = weights[0] / sum(weights)
             first_width = int(total_width * max(0.14, min(first_share * 1.15, 0.24)))
-            first_width = max(_MIN_TABLE_COLUMN_TWIPS, min(first_width, _MAX_LABEL_COLUMN_TWIPS))
+            if total_width >= _MIN_TABLE_COLUMN_TWIPS * 2:
+                first_width = max(
+                    _MIN_TABLE_COLUMN_TWIPS,
+                    min(
+                        first_width,
+                        _MAX_LABEL_COLUMN_TWIPS,
+                        total_width - _MIN_TABLE_COLUMN_TWIPS,
+                    ),
+                )
+            else:
+                first_width = max(1, min(first_width, total_width - 1))
             return [first_width, total_width - first_width]
 
         if len(weights) * _MIN_TABLE_COLUMN_TWIPS > total_width:
